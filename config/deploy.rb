@@ -4,25 +4,24 @@ lock "~> 3.11.2"
 set :application, "capistrano_test"
 set :repo_url, "git@github.com:tushar-emorphis/capistrano_test.git"
 
-require "capistrano/scm/git"
-install_plugin Capistrano::SCM::Git
+# require "capistrano/scm/git"
+# install_plugin Capistrano::SCM::Git
 
 set :user, "emorphis"
 
 # require 'capistrano/ext/multistage'
 
 # If you want to restart using `touch tmp/restart.txt`, add this to your config/deploy.rb:
-set :passenger_restart_with_touch, true
+# set :passenger_restart_with_touch, true
 
 set :stages, ["staging", "production"]
-set :default_stage, "staging"
+# set :default_stage, "staging"
 
 # If you want to restart using `passenger-config restart-app`, add this to your config/deploy.rb:
 # set :passenger_restart_with_touch, false # Note that `nil` is NOT the same as `false` here
 
-
 # Default branch is :master
-# ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
+ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
 # Default deploy_to directory is /var/www/my_app_name
 # set :deploy_to, "/var/www/my_app_name"
@@ -54,3 +53,15 @@ set :default_stage, "staging"
 
 # Uncomment the following to require manually verifying the host key before first deploy.
 # set :ssh_options, verify_host_key: :secure
+# set :ssh_options {
+# 	forward_agent: true,
+# 	auth_methpods: %w(publickey),
+# 	user: 'emorphis'
+# }
+set :user_sudo, false
+
+after 'deploy:updated', :updated_cache do 
+  on roles(:app) do
+     execute :chmod, "-R 777 #{fetch(:deploy_to)}/current/#{fetch(:cache_path)}"
+  end
+end

@@ -60,5 +60,5 @@
 #     # password: "please use keys"
 #   }
 
-server "capistrano_test_server.com", :app, :web, :db, :primary => true
+server "localhost", roles: [:app, :web, :db], :primary => true 
 set :deploy_to, "/var/www/capistrano_test"
